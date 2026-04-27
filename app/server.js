@@ -57,8 +57,16 @@ app.get('/api/time', requireApiKey, (req, res) => {
 // ----- MCP surface -----------------------------------------------------------
 
 const mcpHandler = createMcpRequestHandler();
+// StreamableHTTP transport handles POST (client→server JSON-RPC), GET (open
+// SSE channel for server→client streaming) and DELETE (close session). VS
+// Code's MCP client opens GET first; only wiring POST returns 404 and the
+// client errors with a low-level `TypeError: fetch failed`.
 app.post('/mcp', mcpHandler);
 app.post('/mcp/', mcpHandler);
+app.get('/mcp', mcpHandler);
+app.get('/mcp/', mcpHandler);
+app.delete('/mcp', mcpHandler);
+app.delete('/mcp/', mcpHandler);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Embr Foundry Tool Sample listening on :${PORT}`);
